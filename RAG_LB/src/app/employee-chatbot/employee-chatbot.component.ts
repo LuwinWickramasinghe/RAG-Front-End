@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './employee-chatbot.component.html',
-  styleUrls: ['./employee-chatbot.component.css']
+  //styleUrls: ['./employee-chatbot.component.css']
 })
 
 export class EmployeeChatbotComponent {
