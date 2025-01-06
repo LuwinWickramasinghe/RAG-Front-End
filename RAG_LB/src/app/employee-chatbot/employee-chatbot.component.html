@@ -1,0 +1,46 @@
+<div class="w-96 h-full flex flex-col justify-between bg-white shadow-lg rounded-xl border border-gray-200">
+    <!-- Header -->
+    <div class="bg-gray-100 p-4 rounded-t-xl flex items-center">
+      <span class="text-red-600 mr-2">&#128172;</span>
+      <h2 class="text-lg font-semibold text-gray-800">LB Finance Chatbot</h2>
+    </div>
+  
+    <!-- Chat History -->
+    <div class="flex-grow overflow-y-auto p-2 max-h-96">
+      <div *ngFor="let msg of messages" [ngClass]="{'justify-start': msg.type === 'ai', 'justify-end': msg.type !== 'ai'}">
+        <div
+          [ngClass]="{'bg-gray-100 text-gray-800': msg.type === 'ai', 'bg-red-500 text-white': msg.type !== 'ai'}"
+          class="p-3 rounded-lg max-w-[80%]"
+        >
+          <p>{{ msg.text }}</p>
+          <span class="text-xs text-gray-500 block mt-1">{{ msg.timestamp }}</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- File Upload Indicator -->
+    <div *ngIf="isUploading" class="p-2 bg-yellow-50 text-yellow-700 flex items-center">
+      <span class="mr-2">&#8682;</span>
+      <span>Uploading document...</span>
+    </div>
+  
+    <!-- Input Area -->
+    <div class="p-4 border-t">
+      <div class="flex items-center space-x-2">
+        <label class="cursor-pointer">
+          <input type="file" class="hidden" (change)="handleFileUpload($event)" />
+          <span class="text-gray-500 hover:text-red-600">&#8682;</span>
+        </label>
+        <input
+          type="text"
+          placeholder="Ask your question here..."
+          [(ngModel)]="input"
+          class="flex-grow p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
+        />
+        <button class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600">
+          &#128386;
+        </button>
+      </div>
+    </div>
+  </div>
+  
