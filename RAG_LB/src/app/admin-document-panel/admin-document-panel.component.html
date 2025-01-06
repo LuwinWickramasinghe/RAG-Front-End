@@ -1,0 +1,58 @@
+<div class="w-full bg-white shadow-lg rounded-xl border border-gray-200">
+    <!-- Header -->
+    <div class="bg-gray-100 p-4 rounded-t-xl flex justify-between items-center">
+      <div class="flex items-center">
+        <span class="text-red-600 mr-2">&#128221;</span>
+        <h2 class="text-lg font-semibold text-gray-800">Document Management</h2>
+      </div>
+      <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+        <span class="mr-2">&#8682;</span>
+        Upload New Document
+      </button>
+    </div>
+  
+    <!-- Search and Filter -->
+    <div class="p-4 border-b">
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">&#128270;</span>
+        <input
+          type="text"
+          placeholder="Search documents..."
+          class="w-full pl-10 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
+        />
+      </div>
+    </div>
+  
+    <!-- Document Table -->
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b">
+          <tr>
+            <th class="p-3 text-left">File Name</th>
+            <th class="p-3 text-left">Uploaded By</th>
+            <th class="p-3 text-left">Upload Date</th>
+            <th class="p-3 text-left">Status</th>
+            <th class="p-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doc of documents" class="border-b hover:bg-gray-50">
+            <td class="p-3">{{ doc.name }}</td>
+            <td class="p-3">{{ doc.uploader }}</td>
+            <td class="p-3">{{ doc.uploadDate }}</td>
+            <td class="p-3">
+              <span [ngClass]="{'bg-green-100 text-green-800': doc.status === 'Processed', 'bg-red-100 text-red-800': doc.status === 'Failed'}"
+                class="px-2 py-1 rounded-full text-xs">
+                {{ doc.status }}
+              </span>
+            </td>
+            <td class="p-3 flex space-x-2">
+              <button class="text-blue-500 hover:text-blue-700">&#128504;</button>
+              <button class="text-red-500 hover:text-red-700">&#128465;</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
