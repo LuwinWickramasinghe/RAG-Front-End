@@ -1,0 +1,38 @@
+<div class="chatbot-container">
+    <!-- Header -->
+    <div class="header">
+      <span class="icon">💬</span>
+      <h2>LB Finance Chatbot</h2>
+    </div>
+  
+    <!-- Chat History -->
+    <div class="chat-history">
+      <div
+        *ngFor="let msg of messages"
+        [ngClass]="{'ai-message': msg.type === 'ai', 'user-message': msg.type === 'user'}"
+      >
+        <p>{{ msg.text }}</p>
+        <small>{{ msg.timestamp }}</small>
+      </div>
+    </div>
+  
+    <!-- File Upload Indicator -->
+    <div *ngIf="isUploading" class="upload-indicator">
+      <span>📤 Uploading document...</span>
+    </div>
+  
+    <!-- Input Area -->
+    <div class="input-area">
+      <label>
+        <input type="file" (change)="handleFileUpload($event)" hidden />
+        <span>📁</span>
+      </label>
+      <input
+        type="text"
+        [(ngModel)]="input"
+        placeholder="Ask your question here..."
+      />
+      <button (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+  
