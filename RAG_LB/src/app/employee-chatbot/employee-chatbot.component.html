@@ -1,7 +1,7 @@
 <div class="w-96 h-screen flex flex-col justify-between bg-white shadow-lg rounded-xl border border-gray-200">
   <!-- Header -->
   <div class="bg-gray-100 p-4 rounded-t-xl flex items-center">
-    <span class="text-red-600 mr-2">&#128172;</span>
+    <span-lucide [img]="MessageCircle" class="my-icon"></span-lucide>
     <h2 class="text-lg font-semibold text-gray-800">LB Finance Chatbot</h2>
   </div>
 
@@ -39,7 +39,7 @@
         class="flex-grow p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
       />
       <button class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600" (click)="sendMessage()">
-        &#128386;
+        <span-lucide [img]="Send" class="my-icon"></span-lucide>
       </button>
     </div>
   </div>

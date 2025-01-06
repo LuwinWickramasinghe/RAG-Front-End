@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="bg-gray-100 p-4 rounded-t-xl flex justify-between items-center">
       <div class="flex items-center">
-        <span class="text-red-600 mr-2">&#128221;</span>
+        <span class="text-red-600 mr-2"><span-lucide [img]="FileText" class="my-icon"></span-lucide></span>
         <h2 class="text-lg font-semibold text-gray-800">Document Management</h2>
       </div>
       <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
@@ -14,7 +14,7 @@
     <!-- Search and Filter -->
     <div class="p-4 border-b">
       <div class="relative">
-        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">&#128270;</span>
+        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"><span-lucide [img]="Search" class="my-icon"></span-lucide></span>
         <input
           type="text"
           placeholder="Search documents..."
@@ -47,8 +47,8 @@
               </span>
             </td>
             <td class="p-3 flex space-x-2">
-              <button class="text-blue-500 hover:text-blue-700">&#128504;</button>
-              <button class="text-red-500 hover:text-red-700">&#128465;</button>
+              <button class="text-blue-500 hover:text-blue-700"><span-lucide [img]="CheckCircle" class="my-icon"></span-lucide></button>
+              <button class="text-red-500 hover:text-red-700"><span-lucide [img]="XCircle" class="my-icon"></span-lucide></button>
             </td>
           </tr>
         </tbody>

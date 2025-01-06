@@ -1,14 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, MessageCircle, Send } from 'lucide-angular';
 
 @Component({
   selector: 'app-employee-chatbot',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './employee-chatbot.component.html',
 })
+
 export class EmployeeChatbotComponent {
+  readonly MessageCircle = MessageCircle;
+  readonly Send = Send;
   messages = [
     {
       id: 1,
