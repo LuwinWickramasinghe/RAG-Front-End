@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { LucideAngularModule, FileText, CheckCircle, XCircle, Search} from 'lucide-angular';
 
 @Component({
@@ -19,4 +21,30 @@ export class AdminDocumentPanelComponent {
     { id: 1, name: 'LeavePolicy.pdf', uploader: 'Admin01', status: 'Processed', uploadDate: '2024-03-15' },
     { id: 2, name: 'ComplianceRules.docx', uploader: 'Admin02', status: 'Failed', uploadDate: '2024-03-14' },
   ];
+
+  constructor(private http: HttpClient) {}
+
+  triggerFileInput() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    fileInput.click();
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.http.post<any>('http://127.0.0.1:8000/upload/', formData).subscribe(
+        (response) => {
+          this.documents.push(response);
+        },
+        (error) => {
+          console.error('Upload failed', error);
+        }
+      );
+    }
+  }
 }
+

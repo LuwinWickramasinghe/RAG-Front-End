@@ -6,7 +6,7 @@ import { AdminDocumentPanelComponent } from './admin-document-panel/admin-docume
 export const routes: Routes = [
   { path: 'employee-chatbot', component: EmployeeChatbotComponent },
   { path: 'admin-document-panel', component: AdminDocumentPanelComponent },
-  { path: '', redirectTo: '/employee-chatbot', pathMatch: 'full' },
+  { path: '', redirectTo: '/admin-document-panel', pathMatch: 'full' },
 ];
 
 @NgModule({

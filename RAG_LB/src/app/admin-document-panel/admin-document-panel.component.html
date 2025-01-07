@@ -5,10 +5,15 @@
         <span class="text-red-600 mr-2"><span-lucide [img]="FileText" class="my-icon"></span-lucide></span>
         <h2 class="text-lg font-semibold text-gray-800">Document Management</h2>
       </div>
-      <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-        <span class="mr-2">&#8682;</span>
-        Upload New Document
-      </button>
+      <input type="file" id="fileInput" class="hidden" (change)="onFileSelected($event)" />
+<button
+  class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+  (click)="triggerFileInput()"
+>
+  <span class="mr-2">&#8682;</span>
+  Upload New Document
+</button>
+
     </div>
   
     <!-- Search and Filter -->
