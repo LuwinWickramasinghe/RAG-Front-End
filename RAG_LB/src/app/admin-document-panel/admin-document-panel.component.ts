@@ -36,14 +36,19 @@ export class AdminDocumentPanelComponent {
       const formData = new FormData();
       formData.append('file', file);
 
-      this.http.post<any>('http://127.0.0.1:8000/upload/', formData).subscribe(
-        (response) => {
+      this.http.post<any>('http://127.0.0.1:8000/upload/', formData).subscribe({
+        next: (response) => {
           this.documents.push(response);
+          console.log(this.documents);
         },
-        (error) => {
+        error: (error) => {
           console.error('Upload failed', error);
+          console.log(this.documents);
+        },
+        complete: () => {
+          console.log('Upload completed successfully');
         }
-      );
+      });      
     }
   }
 }
