@@ -6,13 +6,14 @@
   </div>
 
   <!-- Chat History -->
-  <div class="flex-grow overflow-y-auto p-2 max-h-full">
-    <div *ngFor="let msg of messages" [ngClass]="{'justify-start': msg.type === 'ai', 'justify-end': msg.type !== 'ai'}" class="flex mb-2">
-      <div
-        [ngClass]="{'bg-gray-100 text-gray-800': msg.type === 'ai', 'bg-red-500 text-white': msg.type !== 'ai'}"
-        class="p-3 rounded-lg max-w-[80%]"
-      >
-        <p>{{ msg.text }}</p>
+  <div #chatContainer class="flex-grow overflow-y-auto p-2 max-h-full">
+    <div *ngFor="let msg of messages"
+        [ngClass]="{'justify-start': msg.type === 'ai', 'justify-end': msg.type !== 'ai'}"
+        class="flex mb-2">
+      <div [ngClass]="{'bg-gray-100 text-gray-800': msg.type === 'ai', 'bg-red-500 text-white': msg.type !== 'ai'}"
+          class="p-3 rounded-lg max-w-[80%]">
+        <!-- Apply white-space: pre-line to preserve newlines and wrap text -->
+        <p style="white-space: pre-line;">{{ msg.text }}</p>
         <span class="text-xs text-gray-500 block mt-1">{{ msg.timestamp }}</span>
       </div>
     </div>
