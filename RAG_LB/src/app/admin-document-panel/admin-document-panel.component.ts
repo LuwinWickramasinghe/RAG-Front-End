@@ -2,8 +2,15 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { provideHttpClient } from '@angular/common/http';
-import { LucideAngularModule, FileText, CheckCircle, XCircle, Search} from 'lucide-angular';
+import { LucideAngularModule, FileText, CheckCircle, XCircle, Search, Loader2, Settings  } from 'lucide-angular';
+import Swal from 'sweetalert2';
+
+interface Document {
+  name: string;
+  uploader: string;
+  uploadDate: string;
+  status: string;
+}
 
 @Component({
   selector: 'app-admin-document-panel',
@@ -17,10 +24,11 @@ export class AdminDocumentPanelComponent {
   readonly CheckCircle = CheckCircle;
   readonly XCircle = XCircle;
   readonly Search = Search;
-  documents = [
-    { id: 1, name: 'LeavePolicy.pdf', uploader: 'Admin01', status: 'Processed', uploadDate: '2024-03-15' },
-    { id: 2, name: 'ComplianceRules.docx', uploader: 'Admin02', status: 'Failed', uploadDate: '2024-03-14' },
-  ];
+  readonly Loader2 = Loader2;
+  readonly Settings = Settings;
+
+  documents: Document[] = [];
+  isProcessing = false; 
 
   constructor(private http: HttpClient) {}
 
@@ -38,18 +46,70 @@ export class AdminDocumentPanelComponent {
 
       this.http.post<any>('http://127.0.0.1:8000/upload/', formData).subscribe({
         next: (response) => {
-          this.documents.push(response);
-          console.log(this.documents);
+          this.documents.push({
+            name: response.name || 'Unknown',
+            uploader: response.uploader || 'Unknown',
+            uploadDate: response.uploadDate || new Date().toISOString(),
+            status: response.status || 'Pending',
+          });
+
+          Swal.fire({
+            icon: 'success',
+            title: 'Upload Successful',
+            text: 'Your document has been uploaded successfully!',
+          });
         },
-        error: (error) => {
-          console.error('Upload failed', error);
-          console.log(this.documents);
+        error: () => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Upload Failed',
+            text: 'Something went wrong while uploading the file.',
+          });
         },
-        complete: () => {
-          console.log('Upload completed successfully');
-        }
-      });      
+      });
     }
   }
-}
 
+  processFiles() {
+    this.isProcessing = true;
+
+    // Show processing alert
+    Swal.fire({
+      title: 'Processing Files',
+      text: 'Please wait while the files are being processed...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    this.http.get<any>('http://127.0.0.1:8000/process-files/').subscribe({
+      next: (response) => {
+        this.isProcessing = false;
+        Swal.fire({
+          icon: 'success',
+          title: 'Processing Complete',
+          text: 'All files have been processed successfully!',
+        });
+
+        // Update document statuses
+        this.documents.forEach((doc) => {
+          doc.status = 'Processed';
+        });
+      },
+      error: () => {
+        this.isProcessing = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Processing Failed',
+          text: 'There was an error processing the files.',
+        });
+
+        // Mark documents as failed
+        this.documents.forEach((doc) => {
+          doc.status = 'Failed';
+        });
+      },
+    });
+  }
+}
