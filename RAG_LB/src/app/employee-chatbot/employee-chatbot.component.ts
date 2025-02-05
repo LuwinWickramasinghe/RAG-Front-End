@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule, MessageCircle, Send } from 'lucide-angular';
 
 @Component({
@@ -9,7 +10,6 @@ import { LucideAngularModule, MessageCircle, Send } from 'lucide-angular';
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './employee-chatbot.component.html',
 })
-
 export class EmployeeChatbotComponent {
   readonly MessageCircle = MessageCircle;
   readonly Send = Send;
@@ -23,45 +23,51 @@ export class EmployeeChatbotComponent {
   ];
   input = '';
   isUploading = false;
+  isThinking = false;
+
+  constructor(private http: HttpClient) {}
 
   // Handles sending the user's message
   sendMessage() {
     if (this.input.trim()) {
-      this.messages.push({
+      const userMessage = {
         id: this.messages.length + 1,
         type: 'user',
         text: this.input.trim(),
         timestamp: this.getCurrentTime(),
-      });
+      };
+      this.messages.push(userMessage);
+      
+      const messageText = this.input.trim();
       this.input = '';
-      this.simulateBotResponse(); // Optional: Simulate a bot response
+      this.isThinking = true;
+      this.fetchBotResponse(messageText);
     }
   }
 
-  // Simulates a bot response
-  simulateBotResponse() {
-    setTimeout(() => {
-      this.messages.push({
-        id: this.messages.length + 1,
-        type: 'ai',
-        text: 'I am here to assist you. Please tell me more.',
-        timestamp: this.getCurrentTime(),
-      });
-    }, 1500);
-  }
-
-  // Handles file upload
-  handleFileUpload(event: Event) {
-    this.isUploading = true;
-    setTimeout(() => {
-      this.isUploading = false;
-      this.messages.push({
-        id: this.messages.length + 1,
-        type: 'ai',
-        text: 'Your document has been uploaded successfully.',
-        timestamp: this.getCurrentTime(),
-      });
-    }, 2000);
+  // Sends message to backend and fetches bot response
+  fetchBotResponse(message: string) {
+    this.http.post<{ response: string }>('http://127.0.0.1:8000/chat', { message }).subscribe(
+      (res) => {
+        this.isThinking = false;
+        this.messages.push({
+          id: this.messages.length + 1,
+          type: 'ai',
+          text: res.response,
+          timestamp: this.getCurrentTime(),
+        });
+      },
+      (error) => {
+        this.isThinking = false;
+        console.error('Error fetching bot response:', error);
+        this.messages.push({
+          id: this.messages.length + 1,
+          type: 'ai',
+          text: 'Sorry, I am unable to process your request at the moment.',
+          timestamp: this.getCurrentTime(),
+        });
+      }
+    );
   }
 
   // Gets the current time in HH:mm AM/PM format
