@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -10,7 +10,9 @@ import { LucideAngularModule, MessageCircle, Send } from 'lucide-angular';
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './employee-chatbot.component.html',
 })
-export class EmployeeChatbotComponent {
+export class EmployeeChatbotComponent implements AfterViewInit {
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
+
   readonly MessageCircle = MessageCircle;
   readonly Send = Send;
   messages = [
@@ -27,6 +29,10 @@ export class EmployeeChatbotComponent {
 
   constructor(private http: HttpClient) {}
 
+  ngAfterViewInit() {
+    this.scrollToBottom();
+  }
+
   // Handles sending the user's message
   sendMessage() {
     if (this.input.trim()) {
@@ -37,11 +43,11 @@ export class EmployeeChatbotComponent {
         timestamp: this.getCurrentTime(),
       };
       this.messages.push(userMessage);
-      
-      const messageText = this.input.trim();
       this.input = '';
       this.isThinking = true;
-      this.fetchBotResponse(messageText);
+      this.scrollToBottom(); // Scroll immediately after user input
+
+      this.fetchBotResponse(userMessage.text);
     }
   }
 
@@ -56,6 +62,7 @@ export class EmployeeChatbotComponent {
           text: res.response,
           timestamp: this.getCurrentTime(),
         });
+        this.scrollToBottom(); // Scroll after receiving response
       },
       (error) => {
         this.isThinking = false;
@@ -66,8 +73,18 @@ export class EmployeeChatbotComponent {
           text: 'Sorry, I am unable to process your request at the moment.',
           timestamp: this.getCurrentTime(),
         });
+        this.scrollToBottom(); // Scroll after error response
       }
     );
+  }
+
+  // Scrolls the chat container to the bottom
+  scrollToBottom() {
+    setTimeout(() => {
+      if (this.chatContainer) {
+        this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+      }
+    }, 100);
   }
 
   // Gets the current time in HH:mm AM/PM format

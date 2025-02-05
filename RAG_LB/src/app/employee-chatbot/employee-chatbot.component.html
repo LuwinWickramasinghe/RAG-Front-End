@@ -6,8 +6,10 @@
   </div>
 
   <!-- Chat History -->
-  <div class="flex-grow overflow-y-auto p-2 max-h-full">
-    <div *ngFor="let msg of messages" [ngClass]="{'justify-start': msg.type === 'ai', 'justify-end': msg.type !== 'ai'}" class="flex mb-2">
+  <div #chatContainer class="flex-grow overflow-y-auto p-2 max-h-full">
+    <div *ngFor="let msg of messages" 
+        [ngClass]="{'justify-start': msg.type === 'ai', 'justify-end': msg.type !== 'ai'}" 
+        class="flex mb-2">
       <div
         [ngClass]="{'bg-gray-100 text-gray-800': msg.type === 'ai', 'bg-red-500 text-white': msg.type !== 'ai'}"
         class="p-3 rounded-lg max-w-[80%]"
@@ -23,6 +25,7 @@
       <p class="text-gray-600">Thinking...</p>
     </div>
   </div>
+
 
   <!-- File Upload Indicator -->
   <div *ngIf="isUploading" class="p-2 bg-yellow-50 text-yellow-700 flex items-center">
