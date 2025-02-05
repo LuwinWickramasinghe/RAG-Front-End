@@ -6,7 +6,7 @@
   </div>
 
   <!-- Chat History -->
-  <div #chatContainer #chatContainer class="flex-grow overflow-y-auto p-2 max-h-full">
+  <div #chatContainer class="flex-grow overflow-y-auto p-2 max-h-full">
     <div *ngFor="let msg of messages"
         
         [ngClass]="{'justify-start': msg.type === 'ai', 'justify-end': msg.type !== 'ai'}"
