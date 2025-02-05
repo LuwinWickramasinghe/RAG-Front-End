@@ -1,4 +1,4 @@
-<div class="w-96 h-screen w-screen flex flex-col justify-between bg-white shadow-lg rounded-xl border border-gray-200">
+<div class="h-screen w-screen flex flex-col justify-between bg-white shadow-lg rounded-xl border border-gray-200">
   <!-- Header -->
   <div class="bg-gray-100 p-4 rounded-t-xl flex items-center">
     <span-lucide [img]="MessageCircle" class="my-icon"></span-lucide>
@@ -16,6 +16,12 @@
         <span class="text-xs text-gray-500 block mt-1">{{ msg.timestamp }}</span>
       </div>
     </div>
+
+    <!-- Thinking Animation -->
+    <div *ngIf="isThinking" class="flex justify-start items-center space-x-2 p-2">
+      <div class="w-5 h-5 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+      <p class="text-gray-600">Thinking...</p>
+    </div>
   </div>
 
   <!-- File Upload Indicator -->
@@ -27,7 +33,6 @@
   <!-- Input Area -->
   <div class="p-4 border-t">
     <div class="flex items-center space-x-2">
-
       <input
         type="text"
         placeholder="Ask your question here..."
