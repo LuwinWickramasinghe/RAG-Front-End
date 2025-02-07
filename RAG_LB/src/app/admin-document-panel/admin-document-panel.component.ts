@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -19,7 +19,7 @@ interface Document {
   templateUrl: './admin-document-panel.component.html',
   styleUrls: ['./admin-document-panel.component.css'],
 })
-export class AdminDocumentPanelComponent {
+export class AdminDocumentPanelComponent implements OnInit{
   readonly FileText = FileText;
   readonly CheckCircle = CheckCircle;
   readonly XCircle = XCircle;
@@ -29,12 +29,40 @@ export class AdminDocumentPanelComponent {
 
   documents: Document[] = [];
   isProcessing = false; 
+  isLoading = true;
 
   constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.fetchDocuments();
+  }
 
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     fileInput.click();
+  }
+
+  fetchDocuments() {
+    this.isLoading = true;
+    this.http.get<any[]>('http://127.0.0.1:8000/documents').subscribe({
+      next: (response) => {
+        this.documents = response.map((doc) => ({
+          name: doc.filename,
+          uploader: doc.created_at,
+          uploadDate: doc.uploader,
+          status: doc.status,
+        }));
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Failed to Load Documents',
+          text: 'There was an error retrieving the document list.',
+        });
+      },
+    });
   }
 
   onFileSelected(event: Event) {
