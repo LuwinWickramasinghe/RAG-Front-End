@@ -48,7 +48,7 @@
         <!-- AI Response (Left Side) -->
         <div *ngIf="msg.ai_response" class="flex justify-start mb-2">
           <div class="bg-gray-100 text-gray-800 p-3 rounded-lg max-w-[80%]">
-            <p>{{ msg.ai_response }}</p>
+            <p style="white-space: pre-line;">{{ msg.ai_response }}</p>
             <span class="text-xs text-gray-500 block mt-1">{{ msg.timestamp }}</span>
           </div>
         </div>
