@@ -5,16 +5,15 @@
 
     <!-- Create New Thread Button (Fixed at Top) -->
     <button 
-      class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition mb-4"
+      class="w-full bg-gray-400 text-white p-2 rounded-md hover:bg-blue-600 transition mb-4 mt-4"
       (click)="createNewThread()"
     >
       + Create New Thread
     </button>
 
-    <!-- Scrollable Thread List -->
     <ul class="mt-2 flex-grow overflow-y-auto">
       <li 
-        *ngFor="let thread of threads" 
+        *ngFor="let thread of threads.slice().reverse()" 
         (click)="selectThread(thread.id)" 
         [ngClass]="{
           'bg-gray-300 font-bold border-l-4 border-blue-500': thread.id === selectedThreadId
@@ -24,6 +23,7 @@
         {{ thread.title }}
       </li>
     </ul>
+    
   </div>
 
   <!-- Chat Container -->

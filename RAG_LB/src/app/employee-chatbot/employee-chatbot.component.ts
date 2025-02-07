@@ -97,7 +97,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
         payload.thread_id = this.selectedThreadId;
       }
 
-      this.http.post<{ response: string; thread_id: number }>('http://127.0.0.1:8000/chat', payload).subscribe(
+      this.http.post<{ response: string; thread_id: number, thread_title: string }>('http://127.0.0.1:8000/chat', payload).subscribe(
         (res) => {
           this.selectedThreadId = res.thread_id; // Ensure thread is selected
           const aiMessage = {
@@ -105,7 +105,14 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
             text: res.response,
             timestamp: this.getCurrentTime(),
           };
+          const thread = {
+            id: res.thread_id,
+            title: res.thread_title
+          }
           this.messages.push(aiMessage);
+
+          this.threads.push(thread); // Add new thread to list
+
           this.isThinking = false;
           this.cdRef.detectChanges();
           this.scrollToBottom();
@@ -123,6 +130,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
         }
       );
     }
+    this.cdRef.detectChanges();
   }
 
   scrollToBottom() {
