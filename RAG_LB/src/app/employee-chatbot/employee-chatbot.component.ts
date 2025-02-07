@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -10,34 +10,78 @@ import { LucideAngularModule, MessageCircle, Send } from 'lucide-angular';
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './employee-chatbot.component.html',
 })
-export class EmployeeChatbotComponent implements AfterViewInit {
+export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   @ViewChild('chatContainer') chatContainer!: ElementRef;
 
   readonly MessageCircle = MessageCircle;
   readonly Send = Send;
-  messages = [
-    {
-      id: 1,
-      type: 'ai',
-      text: 'Welcome to LB Finance Knowledge Assistant. How can I help you today?',
-      timestamp: this.getCurrentTime(),
-    },
-  ];
+  messages: any[] = [];
+  threads: any[] = [];
+  selectedThreadId: number | null = null;
   input = '';
   isUploading = false;
   isThinking = false;
+  isLoadingMessages = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
+
+  ngOnInit() {
+    this.fetchThreads();
+  }
 
   ngAfterViewInit() {
     this.scrollToBottom();
   }
 
-  // Handles sending the user's message
+  fetchThreads() {
+    this.http.get<any[]>('http://127.0.0.1:8000/threads').subscribe(
+      (res) => {
+        this.threads = res;
+      },
+      (error) => {
+        console.error('Error fetching threads:', error);
+      }
+    );
+  }
+
+  selectThread(threadId: number) {
+    this.selectedThreadId = threadId;
+    this.messages = []; // Clear previous messages
+    this.isLoadingMessages = true;
+    this.fetchMessages(threadId);
+  }
+
+  fetchMessages(threadId: number) {
+    this.http.get<any[]>(`http://127.0.0.1:8000/threads/${threadId}/messages`).subscribe(
+      (res) => {
+        this.messages = res;
+        this.isLoadingMessages = false;
+        this.scrollToBottom();
+      },
+      (error) => {
+        this.isLoadingMessages = false;
+        console.error('Error fetching messages:', error);
+      }
+    );
+  }
+
+  createNewThread() {
+    this.http.post<{ id: number; title: string }>('http://127.0.0.1:8000/thread/create', { title: 'New Thread' }).subscribe(
+      (res) => {
+        this.threads.push(res); // Add new thread to list
+        this.selectedThreadId = res.id; // Auto-select new thread
+        this.messages = []; // Clear messages
+        this.cdRef.detectChanges(); // Ensure UI updates
+      },
+      (error) => {
+        console.error('Error creating new thread:', error);
+      }
+    );
+  }
+
   sendMessage() {
     if (this.input.trim()) {
       const userMessage = {
-        id: this.messages.length + 1,
         type: 'user',
         text: this.input.trim(),
         timestamp: this.getCurrentTime(),
@@ -45,40 +89,42 @@ export class EmployeeChatbotComponent implements AfterViewInit {
       this.messages.push(userMessage);
       this.input = '';
       this.isThinking = true;
-      this.scrollToBottom(); // Scroll immediately after user input
+      this.scrollToBottom();
+      this.cdRef.detectChanges();
 
-      this.fetchBotResponse(userMessage.text);
+      const payload: any = { message: userMessage.text };
+      if (this.selectedThreadId) {
+        payload.thread_id = this.selectedThreadId;
+      }
+
+      this.http.post<{ response: string; thread_id: number }>('http://127.0.0.1:8000/chat', payload).subscribe(
+        (res) => {
+          this.selectedThreadId = res.thread_id; // Ensure thread is selected
+          const aiMessage = {
+            type: 'ai',
+            text: res.response,
+            timestamp: this.getCurrentTime(),
+          };
+          this.messages.push(aiMessage);
+          this.isThinking = false;
+          this.cdRef.detectChanges();
+          this.scrollToBottom();
+        },
+        (error) => {
+          this.isThinking = false;
+          console.error('Error fetching bot response:', error);
+          this.messages.push({
+            type: 'ai',
+            text: 'Sorry, I am unable to process your request at the moment.',
+            timestamp: this.getCurrentTime(),
+          });
+          this.cdRef.detectChanges();
+          this.scrollToBottom();
+        }
+      );
     }
   }
 
-  // Sends message to backend and fetches bot response
-  fetchBotResponse(message: string) {
-    this.http.post<{ response: string }>('http://127.0.0.1:8000/chat', { message }).subscribe(
-      (res) => {
-        this.isThinking = false;
-        this.messages.push({
-          id: this.messages.length + 1,
-          type: 'ai',
-          text: res.response,
-          timestamp: this.getCurrentTime(),
-        });
-        this.scrollToBottom(); // Scroll after receiving response
-      },
-      (error) => {
-        this.isThinking = false;
-        console.error('Error fetching bot response:', error);
-        this.messages.push({
-          id: this.messages.length + 1,
-          type: 'ai',
-          text: 'Sorry, I am unable to process your request at the moment.',
-          timestamp: this.getCurrentTime(),
-        });
-        this.scrollToBottom(); // Scroll after error response
-      }
-    );
-  }
-
-  // Scrolls the chat container to the bottom
   scrollToBottom() {
     setTimeout(() => {
       if (this.chatContainer) {
@@ -87,12 +133,8 @@ export class EmployeeChatbotComponent implements AfterViewInit {
     }, 100);
   }
 
-  // Gets the current time in HH:mm AM/PM format
   getCurrentTime(): string {
     const now = new Date();
-    const hours = now.getHours() % 12 || 12;
-    const minutes = now.getMinutes().toString().padStart(2, '0');
-    const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-    return `${hours}:${minutes} ${ampm}`;
+    return `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
   }
 }
