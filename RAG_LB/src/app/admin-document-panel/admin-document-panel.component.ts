@@ -28,6 +28,7 @@ export class AdminDocumentPanelComponent implements OnInit{
   readonly Settings = Settings;
 
   documents: Document[] = [];
+  selectedDocuments: string[] = [];
   isProcessing = false; 
   isLoading = true;
 
@@ -75,7 +76,7 @@ export class AdminDocumentPanelComponent implements OnInit{
       this.http.post<any>('http://127.0.0.1:8000/upload/', formData).subscribe({
         next: (response) => {
           this.documents.push({
-            name: response.name || 'Unknown',
+            name: response.filename || 'Unknown',
             uploader: response.uploader || 'Unknown',
             uploadDate: response.uploadDate || new Date().toISOString(),
             status: response.status || 'Pending',
@@ -98,44 +99,68 @@ export class AdminDocumentPanelComponent implements OnInit{
     }
   }
 
+  toggleSelection(filename: string) {
+    const index = this.selectedDocuments.indexOf(filename);
+
+    if (index > -1) {
+      this.selectedDocuments.splice(index, 1);
+    } else {
+      if (this.selectedDocuments.length < 5) {
+        this.selectedDocuments.push(filename);
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Limit Reached',
+          text: 'You can select a maximum of 5 documents!',
+        });
+      }
+    }
+  }
+
   processFiles() {
+    if (this.selectedDocuments.length === 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'No Documents Selected',
+        text: 'Please select up to 5 documents before processing.',
+      });
+      return;
+    }
+
     this.isProcessing = true;
 
-    // Show processing alert
     Swal.fire({
       title: 'Processing Files',
-      text: 'Please wait while the files are being processed...',
+      text: 'Please wait while the selected files are being processed...',
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
       }
     });
 
-    this.http.get<any>('http://127.0.0.1:8000/process-files/').subscribe({
-      next: (response) => {
+    this.http.post<any>('http://127.0.0.1:8000/process-files/', { filenames: this.selectedDocuments }).subscribe({
+      next: () => {
         this.isProcessing = false;
         Swal.fire({
           icon: 'success',
           title: 'Processing Complete',
-          text: 'All files have been processed successfully!',
+          text: 'Selected files have been processed successfully!',
         });
 
-        // Update document statuses
         this.documents.forEach((doc) => {
-          doc.status = 'Processed';
+          if (this.selectedDocuments.includes(doc.name)) {
+            doc.status = 'Processed';
+          }
         });
+
+        this.selectedDocuments = [];
       },
       error: () => {
         this.isProcessing = false;
         Swal.fire({
           icon: 'error',
           title: 'Processing Failed',
-          text: 'There was an error processing the files.',
-        });
-
-        // Mark documents as failed
-        this.documents.forEach((doc) => {
-          doc.status = 'Failed';
+          text: 'There was an error processing the selected files.',
         });
       },
     });
