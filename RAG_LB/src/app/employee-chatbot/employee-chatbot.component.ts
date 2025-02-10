@@ -97,21 +97,26 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
         payload.thread_id = this.selectedThreadId;
       }
 
-      this.http.post<{ response: string; thread_id: number, thread_title: string }>('http://127.0.0.1:8000/chat', payload).subscribe(
+      this.http.post<{ response: string; text:string; ai_response:string ;thread_id: number, thread_title: string, is_new_thread: boolean }>('http://127.0.0.1:8000/chat', payload).subscribe(
         (res) => {
           this.selectedThreadId = res.thread_id; // Ensure thread is selected
           const aiMessage = {
+            id: 1000,
             type: 'ai',
-            text: res.response,
+            text: res.text,
+            ai_response : res.ai_response,
             timestamp: this.getCurrentTime(),
           };
+
+          console.log(aiMessage);
           const thread = {
             id: res.thread_id,
             title: res.thread_title
           }
           this.messages.push(aiMessage);
 
-          this.threads.push(thread); // Add new thread to list
+          if(res.is_new_thread)
+            this.threads.push(thread)
 
           this.isThinking = false;
           this.cdRef.detectChanges();
