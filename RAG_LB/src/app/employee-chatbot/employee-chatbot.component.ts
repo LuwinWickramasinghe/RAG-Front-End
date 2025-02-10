@@ -22,6 +22,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   isUploading = false;
   isThinking = false;
   isLoadingMessages = false;
+  isLoadingThreads = false;
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
 
@@ -34,12 +35,19 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   }
 
   fetchThreads() {
+    this.isLoadingThreads = true; // Show loading indicator
+    this.cdRef.detectChanges();  // Ensure UI updates
+  
     this.http.get<any[]>('http://127.0.0.1:8000/threads').subscribe(
       (res) => {
         this.threads = res;
+        this.isLoadingThreads = false; // Hide loading indicator
+        this.cdRef.detectChanges();
       },
       (error) => {
         console.error('Error fetching threads:', error);
+        this.isLoadingThreads = false; // Hide loading indicator
+        this.cdRef.detectChanges();
       }
     );
   }
