@@ -53,6 +53,7 @@
     <table class="w-full">
       <thead class="bg-gray-50 border-b">
         <tr>
+          <th class="p-3 text-left">Select</th>
           <th class="p-3 text-left">File Name</th>
           <th class="p-3 text-left">Uploaded By</th>
           <th class="p-3 text-left">Upload Date</th>
@@ -62,6 +63,14 @@
       </thead>
       <tbody>
         <tr *ngFor="let doc of documents" class="border-b hover:bg-gray-50">
+          <td class="p-3">
+            <input
+              type="checkbox"
+              [checked]="selectedDocuments.includes(doc.name)"
+              (change)="toggleSelection(doc.name)"
+              [disabled]="selectedDocuments.length >= 5 && !selectedDocuments.includes(doc.name) || doc.status === 'processed'"
+            />
+          </td>
           <td class="p-3">{{ doc.name }}</td>
           <td class="p-3">{{ doc.uploader }}</td>
           <td class="p-3">{{ doc.uploadDate }}</td>
@@ -86,6 +95,7 @@
           </td>
         </tr>
       </tbody>
+      
     </table>
   </div>
 </div>
