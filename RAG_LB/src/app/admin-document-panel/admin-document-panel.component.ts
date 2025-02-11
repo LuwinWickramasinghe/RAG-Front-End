@@ -49,8 +49,8 @@ export class AdminDocumentPanelComponent implements OnInit{
       next: (response) => {
         this.documents = response.map((doc) => ({
           name: doc.filename,
-          uploader: doc.created_at,
-          uploadDate: doc.uploader,
+          uploader: doc.uploader,
+          uploadDate: doc.created_at,
           status: doc.status,
         }));
         this.isLoading = false;
