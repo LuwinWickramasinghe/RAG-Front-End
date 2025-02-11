@@ -68,7 +68,7 @@
               type="checkbox"
               [checked]="selectedDocuments.includes(doc.name)"
               (change)="toggleSelection(doc.name)"
-              [disabled]="selectedDocuments.length >= 5 && !selectedDocuments.includes(doc.name) || doc.status === 'processed'"
+              [disabled]="selectedDocuments.length >= 5 && !selectedDocuments.includes(doc.name) || doc.status === 'Processed'"
             />
           </td>
           <td class="p-3">{{ doc.name }}</td>
