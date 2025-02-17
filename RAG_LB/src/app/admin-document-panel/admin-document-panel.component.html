@@ -50,52 +50,60 @@
 
   <!-- Document Table -->
   <div *ngIf="!isLoading" class="overflow-x-auto p-4">
-    <table class="w-full">
-      <thead class="bg-gray-50 border-b">
+    <p-table #dt [value]="documents" [(selection)]="selectedDocuments" dataKey="name" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="isLoading" [rowHover]="true" [lazy]="false" [globalFilterFields]="['name']">
+      <!-- Table Caption -->
+      <ng-template #caption>
+        <div class="flex justify-between">
+          <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" (click)="dt.clear()" />
+          <p-iconField iconPosition="left">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>     
+            <input pInputText type="text" [(ngModel)]="searchValue" (input)="filterGlobal($event)" placeholder="Keyboard Search" />
+          </p-iconField>
+        </div>
+      </ng-template>
+    
+      <!-- Table Header -->
+      <ng-template pTemplate="header">
         <tr>
-          <th class="p-3 text-left">Select</th>
-          <th class="p-3 text-left">File Name</th>
-          <th class="p-3 text-left">Uploaded By</th>
-          <th class="p-3 text-left">Upload Date</th>
-          <th class="p-3 text-left">Status</th>
-          <th class="p-3 text-left">Actions</th>
+          <th pSelectableColumn>
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th pSortableColumn="name">File Name <p-sortIcon field="name"></p-sortIcon></th>
+          <th pSortableColumn="uploader">Uploaded By <p-sortIcon field="uploader"></p-sortIcon></th>
+          <th pSortableColumn="uploadDate">Upload Date <p-sortIcon field="uploadDate"></p-sortIcon></th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th>Actions</th>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let doc of documents" class="border-b hover:bg-gray-50">
-          <td class="p-3">
-            <input
-              type="checkbox"
-              [checked]="selectedDocuments.includes(doc.name)"
-              (change)="toggleSelection(doc.name)"
-              [disabled]="selectedDocuments.length >= 5 && !selectedDocuments.includes(doc.name) || doc.status === 'Processed'"
-            />
+      </ng-template>
+    
+      <!-- Table Body -->
+      <ng-template pTemplate="body" let-doc>
+        <tr [pSelectableRow]="doc">
+          <td>
+            <p-tableCheckbox [value]="doc" [disabled]="selectedDocuments.length >= 5 && !selectedDocuments.includes(doc.name) || doc.status === 'Processed'"></p-tableCheckbox>
           </td>
-          <td class="p-3">{{ doc.name }}</td>
-          <td class="p-3">{{ doc.uploader }}</td>
-          <td class="p-3">{{ doc.uploadDate }}</td>
-          <td class="p-3">
-            <span
-              [ngClass]="{
-                'bg-green-100 text-green-800': doc.status === 'Processed',
-                'bg-red-100 text-red-800': doc.status === 'Failed'
-              }"
-              class="px-2 py-1 rounded-full text-xs"
-            >
-              {{ doc.status }}
-            </span>
+          <td>{{ doc.name }}</td>
+          <td>{{ doc.uploader }}</td>
+          <td>{{ doc.uploadDate }}</td>
+          <td>
+            <p-tag [value]="doc.status" [severity]="doc.status === 'Processed' ? 'success' : 'danger'"></p-tag>
           </td>
-          <td class="p-3 flex space-x-2">
-            <button class="text-blue-500 hover:text-blue-700">
-              <span-lucide [img]="CheckCircle" class="my-icon"></span-lucide>
-            </button>
-            <button class="text-red-500 hover:text-red-700">
-              <span-lucide [img]="XCircle" class="my-icon"></span-lucide>
-            </button>
+          <td>
+            <p-button icon="pi pi-check" class="p-button-rounded p-button-text p-button-success"></p-button>
+            <p-button icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger"></p-button>
           </td>
         </tr>
-      </tbody>
-      
-    </table>
+      </ng-template>
+    
+      <!-- Empty Message -->
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">No documents found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    
   </div>
 </div>

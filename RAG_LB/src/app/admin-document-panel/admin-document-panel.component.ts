@@ -1,9 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule, FileText, CheckCircle, XCircle, Search, Loader2, Settings  } from 'lucide-angular';
 import Swal from 'sweetalert2';
+import { Table, TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { TagModule } from 'primeng/tag';
+
 
 interface Document {
   name: string;
@@ -15,11 +22,22 @@ interface Document {
 @Component({
   selector: 'app-admin-document-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    LucideAngularModule, 
+    TableModule, 
+    ButtonModule, 
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    TagModule
+  ],
   templateUrl: './admin-document-panel.component.html',
   styleUrls: ['./admin-document-panel.component.css'],
 })
 export class AdminDocumentPanelComponent implements OnInit{
+  @ViewChild('dt') dt!: Table;  
   readonly FileText = FileText;
   readonly CheckCircle = CheckCircle;
   readonly XCircle = XCircle;
@@ -31,6 +49,7 @@ export class AdminDocumentPanelComponent implements OnInit{
   selectedDocuments: string[] = [];
   isProcessing = false; 
   isLoading = true;
+  searchValue = "";
 
   constructor(private http: HttpClient) {}
 
@@ -42,6 +61,15 @@ export class AdminDocumentPanelComponent implements OnInit{
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     fileInput.click();
   }
+
+  filterGlobal(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement) {
+      this.dt.filterGlobal(inputElement.value, 'startsWith');
+    }
+  }
+  
+  
 
   fetchDocuments() {
     this.isLoading = true;
