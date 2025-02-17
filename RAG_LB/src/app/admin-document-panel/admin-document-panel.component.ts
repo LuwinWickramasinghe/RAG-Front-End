@@ -47,6 +47,7 @@ export class AdminDocumentPanelComponent implements OnInit{
 
   documents: Document[] = [];
   selectedDocuments: string[] = [];
+  selectedDocumentObjects: Document[] = [];
   isProcessing = false; 
   isLoading = true;
   searchValue = "";
@@ -146,7 +147,7 @@ export class AdminDocumentPanelComponent implements OnInit{
   }
 
   processFiles() {
-    if (this.selectedDocuments.length === 0) {
+    if (this.selectedDocumentObjects.length === 0) {
       Swal.fire({
         icon: 'warning',
         title: 'No Documents Selected',
@@ -154,9 +155,11 @@ export class AdminDocumentPanelComponent implements OnInit{
       });
       return;
     }
-
+  
+    this.selectedDocuments = this.selectedDocumentObjects.map(doc => doc.name); // Extract only names
+  
     this.isProcessing = true;
-
+  
     Swal.fire({
       title: 'Processing Files',
       text: 'Please wait while the selected files are being processed...',
@@ -165,7 +168,7 @@ export class AdminDocumentPanelComponent implements OnInit{
         Swal.showLoading();
       }
     });
-
+  
     this.http.post<any>('http://127.0.0.1:8000/process-files/', { filenames: this.selectedDocuments }).subscribe({
       next: () => {
         this.isProcessing = false;
@@ -174,13 +177,14 @@ export class AdminDocumentPanelComponent implements OnInit{
           title: 'Processing Complete',
           text: 'Selected files have been processed successfully!',
         });
-
+  
         this.documents.forEach((doc) => {
           if (this.selectedDocuments.includes(doc.name)) {
             doc.status = 'Processed';
           }
         });
-
+  
+        this.selectedDocumentObjects = []; // Clear selection after processing
         this.selectedDocuments = [];
       },
       error: () => {
@@ -193,4 +197,5 @@ export class AdminDocumentPanelComponent implements OnInit{
       },
     });
   }
+  
 }

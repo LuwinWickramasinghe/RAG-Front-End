@@ -28,20 +28,6 @@
     </div>
   </div>
 
-  <!-- Search and Filter -->
-  <div class="p-4 border-b">
-    <div class="relative">
-      <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-        <span-lucide [img]="Search" class="my-icon"></span-lucide>
-      </span>
-      <input
-        type="text"
-        placeholder="Search documents..."
-        class="w-full pl-10 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
-      />
-    </div>
-  </div>
-
   <!-- Loading Indicator -->
   <div *ngIf="isLoading" class="p-6 flex justify-center items-center">
     <span-lucide [img]="Loader2" class="animate-spin text-gray-600 w-6 h-6"></span-lucide>
@@ -50,7 +36,7 @@
 
   <!-- Document Table -->
   <div *ngIf="!isLoading" class="overflow-x-auto p-4">
-    <p-table #dt [value]="documents" [(selection)]="selectedDocuments" dataKey="name" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="isLoading" [rowHover]="true" [lazy]="false" [globalFilterFields]="['name']">
+    <p-table #dt [value]="documents" [(selection)]="selectedDocumentObjects" dataKey="name" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]" [loading]="isLoading" [rowHover]="true" [lazy]="false" [globalFilterFields]="['name']">
       <!-- Table Caption -->
       <ng-template #caption>
         <div class="flex justify-between">
