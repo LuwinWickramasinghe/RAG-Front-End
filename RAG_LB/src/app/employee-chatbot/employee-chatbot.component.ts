@@ -1,8 +1,8 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { LucideAngularModule, MessageCircle, Send } from 'lucide-angular';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { LucideAngularModule, MessageCircle, Send, Minimize, Maximize } from 'lucide-angular';
 
 @Component({
   selector: 'app-employee-chatbot',
@@ -15,6 +15,8 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
 
   readonly MessageCircle = MessageCircle;
   readonly Send = Send;
+  readonly minimize = Minimize;
+  readonly maximize = Maximize;
   messages: any[] = [];
   threads: any[] = [];
   selectedThreadId: number | null = null;
@@ -23,6 +25,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   isThinking = false;
   isLoadingMessages = false;
   isLoadingThreads = false;
+  isMinimized = false;
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
 
@@ -32,6 +35,12 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit() {
     this.scrollToBottom();
+  }
+
+  toggleMinimize() {
+    this.isMinimized = !this.isMinimized;
+    // Allow some time for the new view to render before scrolling
+    setTimeout(() => this.scrollToBottom(), 100);
   }
 
   fetchThreads() {
@@ -116,7 +125,6 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
             timestamp: this.getCurrentTime(),
           };
 
-          console.log(aiMessage);
           const thread = {
             id: res.thread_id,
             title: res.thread_title
@@ -130,12 +138,14 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
           this.cdRef.detectChanges();
           this.scrollToBottom();
         },
-        (error) => {
+        (error:HttpErrorResponse) => {
           this.isThinking = false;
-          console.error('Error fetching bot response:', error);
+          console.error('Error fetching bot response:', error.error.detail);
           this.messages.push({
+            id:1001,
             type: 'ai',
             text: 'Sorry, I am unable to process your request at the moment.',
+            ai_response : error.error.detail,
             timestamp: this.getCurrentTime(),
           });
           this.cdRef.detectChanges();
@@ -158,4 +168,15 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
     const now = new Date();
     return `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
   }
+
+  handleEnter(event: KeyboardEvent): void {
+    if (this.isThinking) {
+      event.preventDefault();
+      console.warn('Enter key is disabled.');
+    } else {
+      this.sendMessage();
+    }
+  }
+  
+
 }

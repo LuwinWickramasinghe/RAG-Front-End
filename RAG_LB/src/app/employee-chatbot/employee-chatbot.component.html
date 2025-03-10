@@ -1,87 +1,75 @@
-<div class="h-screen w-screen flex">
+<!-- Full-Screen UI -->
+<div *ngIf="!isMinimized" class="h-screen w-screen flex">
   <!-- Sidebar -->
-<!-- Sidebar -->
-<div class="w-1/4 bg-gray-100 p-4 border-r flex flex-col h-screen">
-  <h3 class="text-lg font-semibold text-gray-800">Chat Threads</h3>
-
-  <!-- Create New Thread Button (Fixed at Top) -->
-  <button 
-    class="w-full bg-gray-400 text-white p-2 rounded-md hover:bg-blue-600 transition mb-4 mt-4"
-    (click)="createNewThread()"
-  >
-    + Create New Thread
-  </button>
-
-  <!-- Loading Indicator for Threads -->
-  <div *ngIf="isLoadingThreads" class="flex justify-center items-center p-4">
-    <div class="w-6 h-6 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
-    <p class="ml-2 text-gray-600">Loading threads...</p>
-  </div>
-
-  <!-- Chat Threads List -->
-  <ul *ngIf="!isLoadingThreads" class="mt-2 flex-grow overflow-y-auto">
-    <li 
-      *ngFor="let thread of threads.slice().reverse()" 
-      (click)="selectThread(thread.id)" 
-      [ngClass]="{
-        'bg-gray-300 font-bold border-l-4 border-blue-500': thread.id === selectedThreadId
-      }"
-      class="p-2 cursor-pointer hover:bg-gray-200 rounded-md transition"
+  <div class="w-1/4 bg-gray-100 p-4 border-r flex flex-col h-screen">
+    <h3 class="text-lg font-semibold text-gray-800">Chat Threads</h3>
+    <button 
+      class="w-full bg-gray-400 text-white p-2 rounded-md hover:bg-blue-600 transition mb-4 mt-4"
+      (click)="createNewThread()"
     >
-      {{ thread.title }}
-    </li>
-  </ul>
-</div>
-
+      + Create New Thread
+    </button>
+    <div *ngIf="isLoadingThreads" class="flex justify-center items-center p-4">
+      <div class="w-6 h-6 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+      <p class="ml-2 text-gray-600">Loading threads...</p>
+    </div>
+    <ul *ngIf="!isLoadingThreads" class="mt-2 flex-grow overflow-y-auto">
+      <li 
+        *ngFor="let thread of threads.slice().reverse()" 
+        (click)="selectThread(thread.id)" 
+        [ngClass]="{
+          'bg-gray-300 font-bold border-l-4 border-blue-500': thread.id === selectedThreadId
+        }"
+        class="p-2 cursor-pointer hover:bg-gray-200 rounded-md transition"
+      >
+        {{ thread.title }}
+      </li>
+    </ul>
+  </div>
 
   <!-- Chat Container -->
   <div class="w-3/4 flex flex-col justify-between bg-white shadow-lg rounded-xl border border-gray-200">
-    <!-- Header -->
-    <div class="bg-gray-100 p-4 rounded-t-xl flex items-center">
-      <span-lucide [img]="MessageCircle" class="my-icon"></span-lucide>
-      <h2 class="text-lg font-semibold text-gray-800">LB Finance Chatbot</h2>
+    <!-- Header with Minimize Button -->
+    <div class="bg-gray-100 p-4 rounded-t-xl flex items-center justify-between">
+      <div class="flex items-center">
+        <span-lucide [img]="MessageCircle" class="my-icon"></span-lucide>
+        <h2 class="text-lg font-semibold text-gray-800 ml-2">LB Finance Chatbot</h2>
+      </div>
+      <button (click)="toggleMinimize()" class="text-gray-500 hover:text-gray-800" title="Minimize">
+        <span-lucide [img]="minimize" class="my-icon"></span-lucide>
+      </button>
     </div>
 
     <!-- Chat History -->
-<div #chatContainer class="flex-grow overflow-y-auto p-2 max-h-full">
-  <!-- Show Loading Indicator When Fetching Messages -->
-  <div *ngIf="isLoadingMessages" class="flex justify-center items-center p-4">
-    <div class="w-6 h-6 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
-    <p class="ml-2 text-gray-600">Loading messages...</p>
-  </div>
-
-  <div *ngFor="let msg of messages">
-    <!-- User Message (Right Side) -->
-    <div *ngIf="msg.type === 'user'" class="flex justify-end mb-2">
-      <div class="bg-red-500 text-white p-3 rounded-lg max-w-[80%]">
-        <p>{{ msg.text }}</p>
-        <span class="text-xs text-white block mt-1">{{ msg.timestamp }}</span>
+    <div #chatContainer class="flex-grow overflow-y-auto p-2 max-h-full">
+      <div *ngIf="isLoadingMessages" class="flex justify-center items-center p-4">
+        <div class="w-6 h-6 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+        <p class="ml-2 text-gray-600">Loading messages...</p>
+      </div>
+      <div *ngFor="let msg of messages">
+        <!-- User Message (Right) -->
+        <div *ngIf="msg.type === 'user'" class="flex justify-end mb-2">
+          <div class="bg-red-500 text-white p-3 rounded-lg max-w-[80%]">
+            <p>{{ msg.text }}</p>
+            <span class="text-xs text-white block mt-1">{{ msg.timestamp }}</span>
+          </div>
+        </div>
+        <!-- AI Response (Left) -->
+        <div *ngIf="msg.ai_response" class="flex justify-start mb-2 items-start">
+          <div class="w-8 h-8 flex items-center justify-center bg-gray-300 rounded-full mr-2 overflow-hidden">
+            <img src="assets/images/lb-finance.logo.png" alt="AI Logo" class="object-cover rounded-full">
+          </div>
+          <div class="bg-gray-100 text-gray-800 p-3 rounded-lg max-w-[80%]">
+            <p style="white-space: pre-line;">{{ msg.ai_response }}</p>
+            <span class="text-xs text-gray-500 block mt-1">{{ msg.timestamp }}</span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="isThinking" class="flex justify-start items-center space-x-2 p-2">
+        <div class="w-5 h-5 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+        <p class="text-gray-600">Thinking...</p>
       </div>
     </div>
-
-    <!-- AI Response (Left Side) -->
-<div *ngIf="msg.ai_response" class="flex justify-start mb-2 items-start">
-  <!-- Logo Circle -->
-  <div class="w-8 h-8 flex items-center justify-center bg-gray-300 rounded-full mr-2 overflow-hidden">
-    <img src="https://s3-symbol-logo.tradingview.com/lb-finance--600.png" alt="AI Logo" class="object-cover rounded-full">
-  </div>
-
-  <!-- AI Message Bubble -->
-  <div class="bg-gray-100 text-gray-800 p-3 rounded-lg max-w-[80%]">
-    <p style="white-space: pre-line;">{{ msg.ai_response }}</p>
-    <span class="text-xs text-gray-500 block mt-1">{{ msg.timestamp }}</span>
-  </div>
-</div>
-
-  </div>
-
-  <!-- Thinking Animation -->
-  <div *ngIf="isThinking" class="flex justify-start items-center space-x-2 p-2">
-    <div class="w-5 h-5 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
-    <p class="text-gray-600">Thinking...</p>
-  </div>
-</div>
-
 
     <!-- File Upload Indicator -->
     <div *ngIf="isUploading" class="p-2 bg-yellow-50 text-yellow-700 flex items-center">
@@ -96,13 +84,63 @@
           type="text"
           placeholder="Ask your question here..."
           [(ngModel)]="input"
-          (keyup.enter)="sendMessage()"
+          (keyup.enter)="isThinking ? null : sendMessage()"
           class="flex-grow p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-300"
         />
-        <button class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600" (click)="sendMessage()">
+        <button [disabled]="isThinking" class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600" (click)="sendMessage()" >
           <span-lucide [img]="Send" class="my-icon"></span-lucide>
         </button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Minimized Chat Box UI -->
+<div *ngIf="isMinimized" class="fixed bottom-4 right-4 bg-white shadow-lg border border-gray-200 rounded-xl flex flex-col"
+     style="width: 400px; height: 500px;">
+  <!-- Header with Maximize Button -->
+  <div class="bg-gray-100 p-2 rounded-t-xl flex items-center justify-between">
+    <h2 class="text-sm font-semibold text-gray-800">LB Finance Chatbot</h2>
+    <button (click)="toggleMinimize()" class="text-gray-500 hover:text-gray-800" title="Maximize">
+      <span-lucide [img]="maximize" class="my-icon"></span-lucide>
+    </button>
+  </div>
+
+  <!-- Chat History (smaller font sizes) -->
+  <div #chatContainer class="flex-grow overflow-y-auto p-2">
+    <div *ngIf="isLoadingMessages" class="flex justify-center items-center p-2">
+      <div class="w-4 h-4 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+    </div>
+    <div *ngFor="let msg of messages">
+      <div *ngIf="msg.type === 'user'" class="flex justify-end mb-1">
+        <div class="bg-red-500 text-white p-2 rounded-lg max-w-[80%] text-xs">
+          <p>{{ msg.text }}</p>
+        </div>
+      </div>
+      <div *ngIf="msg.ai_response" class="flex justify-start mb-1">
+        <div class="bg-gray-100 text-gray-800 p-2 rounded-lg max-w-[80%] text-xs">
+          <p>{{ msg.ai_response }}</p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="isThinking" class="flex justify-start items-center space-x-2 p-2">
+      <div class="w-4 h-4 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="p-2 border-t">
+    <div class="flex items-center space-x-2">
+      <input
+        type="text"
+        placeholder="Type your message..."
+        [(ngModel)]="input"
+        (keyup.enter)="sendMessage()"
+        class="flex-grow p-1 border rounded-md text-xs focus:outline-none"
+      />
+      <button (click)="sendMessage()" class="bg-red-500 text-white p-1 rounded-md text-xs">
+        <span-lucide [img]="Send" class="my-icon"></span-lucide>
+      </button>
     </div>
   </div>
 </div>
