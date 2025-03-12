@@ -2,7 +2,8 @@ import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetector
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { LucideAngularModule, MessageCircle, Send, Minimize, Maximize } from 'lucide-angular';
+import { LucideAngularModule, MessageCircle, Send, Minimize, Maximize, Trash2 } from 'lucide-angular';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-employee-chatbot',
@@ -17,6 +18,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   readonly Send = Send;
   readonly minimize = Minimize;
   readonly maximize = Maximize;
+  readonly trash = Trash2;
   messages: any[] = [];
   threads: any[] = [];
   selectedThreadId: number | null = null;
@@ -177,6 +179,50 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
       this.sendMessage();
     }
   }
-  
 
+
+  deleteThread(threadId: number, event: Event) {
+    event.stopPropagation(); 
+  
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This thread and all its messages will be permanently deleted!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const url = `http://127.0.0.1:8000/threads/delete/${threadId}`;
+  
+        this.http.delete(url).subscribe({
+          next: () => {
+            this.threads = this.threads.filter(thread => thread.id !== threadId);
+    
+            if (this.selectedThreadId === threadId) {
+              this.selectedThreadId = null;
+            }
+    
+            Swal.fire(
+              'Deleted!',
+              'The thread has been deleted successfully.',
+              'success'
+            );
+          },
+          error: (err) => {
+            console.error('Error deleting thread:', err);
+            Swal.fire(
+              'Error!',
+              'Failed to delete the thread. Please try again.',
+              'error'
+            );
+          }
+        });
+      }
+    });
+  }
+  
+  
+  
 }

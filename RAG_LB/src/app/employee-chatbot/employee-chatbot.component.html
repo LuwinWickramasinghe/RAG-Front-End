@@ -20,11 +20,19 @@
         [ngClass]="{
           'bg-gray-300 font-bold border-l-4 border-blue-500': thread.id === selectedThreadId
         }"
-        class="p-2 cursor-pointer hover:bg-gray-200 rounded-md transition"
+        class="p-2 cursor-pointer hover:bg-gray-200 rounded-md transition flex justify-between items-center relative group"
       >
-        {{ thread.title }}
+        <span>{{ thread.title }}</span>
+    
+        <button 
+          (click)="deleteThread(thread.id, $event)" 
+          class="text-red-500 hover:text-red-700 transition opacity-0 group-hover:opacity-100 absolute right-2"
+        >
+          <span-lucide [img]="trash" class="w-5 h-5"></span-lucide>
+        </button>
       </li>
     </ul>
+    
   </div>
 
   <!-- Chat Container -->
