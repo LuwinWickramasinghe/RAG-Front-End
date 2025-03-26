@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetector
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { LucideAngularModule, MessageCircle, Send, Minimize, Maximize, Trash2 } from 'lucide-angular';
+import { LucideAngularModule, MessageCircle, Send, Minimize, Maximize, Trash2, MessageCircleQuestion, X } from 'lucide-angular';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -19,6 +19,8 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   readonly minimize = Minimize;
   readonly maximize = Maximize;
   readonly trash = Trash2;
+  readonly close = X;
+  readonly chat = MessageCircleQuestion;
   messages: any[] = [];
   threads: any[] = [];
   selectedThreadId: number | null = null;
@@ -28,6 +30,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   isLoadingMessages = false;
   isLoadingThreads = false;
   isMinimized = false;
+  animateChat = false;
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
 
@@ -39,10 +42,37 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
     this.scrollToBottom();
   }
 
+  isClosed = false; 
+
+
+  closeMinimized() {
+    // Set the closed flag to true
+    this.isClosed = true;
+  }
+
+  openMinimized() {
+    this.isClosed = false;
+    // Force reflow and retrigger the animation
+    setTimeout(() => {
+      const minimizedChat = document.querySelector('.minimized-chat') as HTMLElement;
+      if (minimizedChat) {
+        minimizedChat.classList.remove('animate-slideIn');
+        // Force reflow so the animation restarts
+        void minimizedChat.offsetWidth;
+        minimizedChat.classList.add('animate-slideIn');
+      }
+    }, 0);
+  }
+  
+  
+
   toggleMinimize() {
     this.isMinimized = !this.isMinimized;
     // Allow some time for the new view to render before scrolling
     setTimeout(() => this.scrollToBottom(), 100);
+    if (this.isMinimized) {
+      this.isClosed = false;
+    }
   }
 
   fetchThreads() {

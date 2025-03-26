@@ -104,14 +104,21 @@
 </div>
 
 <!-- Minimized Chat Box UI -->
-<div *ngIf="isMinimized" class="fixed bottom-4 right-4 bg-white shadow-lg border border-gray-200 rounded-xl flex flex-col"
+<!-- Display minimized chat only if not closed -->
+<div *ngIf="isMinimized && !isClosed" class="minimized-chat fixed bottom-4 right-4 bg-white shadow-lg border border-gray-200 rounded-xl flex flex-col animate-slideIn"
      style="width: 400px; height: 500px;">
-  <!-- Header with Maximize Button -->
+  <!-- Header with Maximize and Close Buttons -->
   <div class="bg-gray-100 p-2 rounded-t-xl flex items-center justify-between">
     <h2 class="text-sm font-semibold text-gray-800">LB Finance Chatbot</h2>
-    <button (click)="toggleMinimize()" class="text-gray-500 hover:text-gray-800" title="Maximize">
-      <span-lucide [img]="maximize" class="my-icon"></span-lucide>
-    </button>
+    <div class="flex items-center">
+      <button (click)="toggleMinimize()" class="text-gray-500 hover:text-gray-800 mr-2" title="Maximize">
+        <span-lucide [img]="maximize" class="my-icon"></span-lucide>
+      </button>
+      <button (click)="closeMinimized()" class="text-gray-500 hover:text-gray-800" title="Close">
+        <!-- Here you can use an icon or simply an "x" -->
+        <span-lucide [img]="close" class="my-icon"></span-lucide>
+      </button>
+    </div>
   </div>
 
   <!-- Chat History (smaller font sizes) -->
@@ -127,7 +134,7 @@
       </div>
       <div *ngIf="msg.ai_response" class="flex justify-start mb-1">
         <div class="bg-gray-100 text-gray-800 p-2 rounded-lg max-w-[80%] text-xs">
-          <p>{{ msg.ai_response }}</p>
+          <p style="white-space: pre-line;">{{ msg.ai_response }}</p>
         </div>
       </div>
     </div>
@@ -151,4 +158,16 @@
       </button>
     </div>
   </div>
+</div>
+
+<!-- Floating Button to Reopen Minimized Chat -->
+<!-- Display the floating button when minimized chat is closed -->
+<div *ngIf="isMinimized && isClosed" class="fixed bottom-4 right-4">
+  <button 
+    (click)="openMinimized()"
+    class="w-12 h-12 rounded-full bg-red-500 text-white shadow-lg flex items-center justify-center "
+    title="Open Chat"
+  >
+    <span-lucide [img]="chat" class="w-6 h-6"></span-lucide>
+  </button>
 </div>
