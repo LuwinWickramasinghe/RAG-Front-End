@@ -10,11 +10,11 @@
     <div class="flex space-x-3">
       <input type="file" id="fileInput" class="hidden" (change)="onFileSelected($event)" />
       <button
-        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 flex items-center"
         (click)="triggerFileInput()"
       >
-        <span class="mr-2">&#8682;</span>
-        Upload New Document
+      <span-lucide [img]="UploadCloud" class="my-icon"></span-lucide>
+      <span class="ml-2">Upload Files</span>
       </button>
 
       <!-- Process Files Button -->

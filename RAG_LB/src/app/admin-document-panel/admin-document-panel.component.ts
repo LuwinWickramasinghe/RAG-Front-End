@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { LucideAngularModule, FileText, CheckCircle, XCircle, Search, Loader2, Settings  } from 'lucide-angular';
+import { LucideAngularModule, FileText, CheckCircle, XCircle, Search, Loader2, Settings, UploadCloud  } from 'lucide-angular';
 import Swal from 'sweetalert2';
 import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -44,6 +44,7 @@ export class AdminDocumentPanelComponent implements OnInit{
   readonly Search = Search;
   readonly Loader2 = Loader2;
   readonly Settings = Settings;
+  readonly UploadCloud = UploadCloud;
 
   documents: Document[] = [];
   selectedDocuments: string[] = [];
