@@ -1,15 +1,14 @@
 @keyframes slideIn {
-    from {
-      transform: translateY(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
   }
-  
-  .animate-slideIn {
-    animation: slideIn 0.5s ease-out;
+  100% {
+    transform: translateY(0);
+    opacity: 1;
   }
-  
+}
+
+.animate-slideIn {
+  animation: slideIn 2s ease-in-out;
+}

@@ -4,12 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { LucideAngularModule, MessageCircle, Send, Minimize, Maximize, Trash2, MessageCircleQuestion, X } from 'lucide-angular';
 import Swal from 'sweetalert2';
+import { SharedService } from '../shared-service';
 
 @Component({
   selector: 'app-employee-chatbot',
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './employee-chatbot.component.html',
+  styleUrls: ['./employee-chatbot.component.css']
 })
 export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   @ViewChild('chatContainer') chatContainer!: ElementRef;
@@ -29,49 +31,34 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   isThinking = false;
   isLoadingMessages = false;
   isLoadingThreads = false;
-  isMinimized = false;
+  isMinimized = true;
   animateChat = false;
+  showChat = false; 
 
-  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, private sharedService : SharedService) {}
 
   ngOnInit() {
     this.fetchThreads();
+
+    this.sharedService.showChat$.subscribe(state => {
+      this.showChat = state;
+    });
   }
 
   ngAfterViewInit() {
     this.scrollToBottom();
   }
 
-  isClosed = false; 
-
-
   closeMinimized() {
-    // Set the closed flag to true
-    this.isClosed = true;
+    this.sharedService.setShowChat(false);
   }
-
-  openMinimized() {
-    this.isClosed = false;
-    // Force reflow and retrigger the animation
-    setTimeout(() => {
-      const minimizedChat = document.querySelector('.minimized-chat') as HTMLElement;
-      if (minimizedChat) {
-        minimizedChat.classList.remove('animate-slideIn');
-        // Force reflow so the animation restarts
-        void minimizedChat.offsetWidth;
-        minimizedChat.classList.add('animate-slideIn');
-      }
-    }, 0);
-  }
-  
-  
 
   toggleMinimize() {
     this.isMinimized = !this.isMinimized;
-    // Allow some time for the new view to render before scrolling
+
     setTimeout(() => this.scrollToBottom(), 100);
     if (this.isMinimized) {
-      this.isClosed = false;
+      this.showChat = false;
     }
   }
 
@@ -82,12 +69,12 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
     this.http.get<any[]>('http://127.0.0.1:8000/threads').subscribe(
       (res) => {
         this.threads = res;
-        this.isLoadingThreads = false; // Hide loading indicator
+        this.isLoadingThreads = false; 
         this.cdRef.detectChanges();
       },
       (error) => {
         console.error('Error fetching threads:', error);
-        this.isLoadingThreads = false; // Hide loading indicator
+        this.isLoadingThreads = false;
         this.cdRef.detectChanges();
       }
     );
@@ -95,7 +82,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
 
   selectThread(threadId: number) {
     this.selectedThreadId = threadId;
-    this.messages = []; // Clear previous messages
+    this.messages = []; 
     this.isLoadingMessages = true;
     this.fetchMessages(threadId);
   }
@@ -117,10 +104,10 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
   createNewThread() {
     this.http.post<{ id: number; title: string }>('http://127.0.0.1:8000/thread/create', { title: 'New Thread' }).subscribe(
       (res) => {
-        this.threads.push(res); // Add new thread to list
-        this.selectedThreadId = res.id; // Auto-select new thread
-        this.messages = []; // Clear messages
-        this.cdRef.detectChanges(); // Ensure UI updates
+        this.threads.push(res); 
+        this.selectedThreadId = res.id; 
+        this.messages = [];
+        this.cdRef.detectChanges(); 
       },
       (error) => {
         console.error('Error creating new thread:', error);
@@ -148,7 +135,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
 
       this.http.post<{ response: string; text:string; ai_response:string ;thread_id: number, thread_title: string, is_new_thread: boolean }>('http://127.0.0.1:8000/chat', payload).subscribe(
         (res) => {
-          this.selectedThreadId = res.thread_id; // Ensure thread is selected
+          this.selectedThreadId = res.thread_id; 
           const aiMessage = {
             id: 1000,
             type: 'ai',
