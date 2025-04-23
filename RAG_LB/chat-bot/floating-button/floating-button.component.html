@@ -1,0 +1,30 @@
+<div *ngIf="showTextBox" class="cloud-text">{{ typedText$ | async }}</div>
+
+<p-button [style]="{
+    position: 'fixed',
+    background: 'transparent',
+    backgroundColor: 'none',
+    border: 'none',
+    boxShadow: 'none',
+    bottom: '30px',
+    right: '30px',
+    zIndex: 1000,
+    width: '100px',
+    height: '100px',
+    borderRadius: '50%',
+    padding: '0',
+    overflow: 'visible'
+  }" (onClick)="toggleChat()">
+
+  <ng-template pTemplate="content" *ngIf="pageFloat === 'Directory'">
+    <img src="../../../assets/img/chatbot/directory-lion.png" alt="Chat" class="pulsing-image"
+      style="width: 120px; height: 100px;" />
+  </ng-template>
+  <ng-template pTemplate="content" *ngIf="pageFloat === 'Rates'">
+    <img src="../../../assets/img/chatbot/rates-lion.png" alt="Chat" class="pulsing-image"
+      style="width: 120px; height: 100px;" />
+  </ng-template>
+
+</p-button>
+
+<app-chat-box [page]="pageFloat" [greet]="greetFloat"></app-chat-box>

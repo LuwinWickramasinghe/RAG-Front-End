@@ -1,0 +1,65 @@
+.chat-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #007bff;
+    border: none;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+
+.cloud-text {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 140px; 
+    right: 30px;
+    width: 190px;
+    height: 60px; 
+    background-color: #f56565;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1001; 
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight:lighter;
+    color: azure;
+}
+
+
+.cloud-text::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; 
+    left: 75%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid rgb(205, 54, 54); 
+}
+
+  @keyframes pulse-button {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  
+  .pulsing-image {
+    animation: pulse-button 2.5s infinite;
+  }

@@ -1,0 +1,61 @@
+<div *ngIf="isMinimized && showChat" class="minimized-chat">
+  <div class="minimized-header">
+    <h2 class="minimized-title"><img src="../../../assets/img/LB_Finance_logo_dark_New.png" style="height: 15px;"
+        alt="LB logo"></h2>
+    <div class="minimized-buttons">
+      <button (click)="resetChat()" class="minimize-button" title="Reset chat">
+        <i class="fas fa-trash-alt fa-lg" style="color: #000000;"></i>
+      </button>
+      <button (click)="closeMinimized()" class="minimize-button" title="Close">
+        <i class="fas fa-times fa-lg" style="color: #000000;"></i>
+      </button>
+    </div>
+  </div>
+
+  <div #chatContainer class="minimized-messages">
+    <div *ngIf="isLoadingMessages" class="loading-container">
+      <div class="minimized-loading-spinner"></div>
+    </div>
+    <div *ngFor="let msg of messages">
+      <div *ngIf="msg.type === 'user'" class="user-message-wrapper">
+        <div class="minimized-user-message">
+          <p>{{ msg.text }}</p>
+        </div>
+      </div>
+      <div *ngIf="msg.ai_response" class="ai-message-wrapper">
+        <div class="logo-container">
+          <img src="../../../assets/img/chatbot/lb-finance.logo.png" alt="AI Logo" class="logo-image">
+        </div>
+        <div class="minimized-ai-message">
+          <p style="white-space: pre-line;">{{ msg.ai_response }}</p>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="isThinking" class="thinking-wrapper">
+      <div class="typing-animation">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div *ngIf="!input && page==='Directory'" class="suggestions scrollable">
+      <span *ngFor="let suggestion of dirSuggestion" (click)="selectSuggestionDir(suggestion)" class="suggestion-chip">
+        {{ suggestion }}
+      </span>
+    </div>
+    <div *ngIf="!input && page==='Rates'" class="suggestions scrollable">
+      <span *ngFor="let suggestion of ratesSuggestion" (click)="selectSuggestionRates(suggestion)"
+        class="suggestion-chip">{{ suggestion }}</span>
+    </div>
+    <div class="input-wrapper">
+      <input type="text" placeholder="Type your message..." [(ngModel)]="input"
+        (keyup.enter)="isThinking ? null : sendMessage()" class="minimized-input" />
+      <button (click)="sendMessage()" class="minimized-send-button" [disabled]="isThinking">
+        <i class="fas fa-paper-plane fa-lg" style="color: #000000;"></i>
+      </button>
+    </div>
+  </div>
+</div>

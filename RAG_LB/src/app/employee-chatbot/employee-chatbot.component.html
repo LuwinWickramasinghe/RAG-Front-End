@@ -33,9 +33,9 @@
     </ul>
   </div>
 
-  <!-- Chat Container -->
+
   <div class="w-3/4 flex flex-col justify-between bg-white shadow-lg rounded-xl border border-gray-200">
-    <!-- Header with Minimize Button -->
+
     <div class="bg-gray-100 p-4 rounded-t-xl flex items-center justify-between">
       <div class="flex items-center">
         <span-lucide [img]="MessageCircle" class="my-icon"></span-lucide>
@@ -46,21 +46,20 @@
       </button>
     </div>
 
-    <!-- Chat History -->
     <div #chatContainer class="flex-grow overflow-y-auto p-2 max-h-full">
       <div *ngIf="isLoadingMessages" class="flex justify-center items-center p-4">
         <div class="w-6 h-6 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
         <p class="ml-2 text-gray-600">Loading messages...</p>
       </div>
       <div *ngFor="let msg of messages">
-        <!-- User Message (Right) -->
+
         <div *ngIf="msg.type === 'user'" class="flex justify-end mb-2">
           <div class="bg-red-500 text-white p-3 rounded-lg max-w-[80%]">
             <p>{{ msg.text }}</p>
             <span class="text-xs text-white block mt-1">{{ msg.timestamp }}</span>
           </div>
         </div>
-        <!-- AI Response (Left) -->
+
         <div *ngIf="msg.ai_response" class="flex justify-start mb-2 items-start">
           <div class="w-8 h-8 flex items-center justify-center bg-gray-300 rounded-full mr-2 overflow-hidden">
             <img src="assets/images/lb-finance.logo.png" alt="AI Logo" class="object-cover rounded-full">
@@ -71,13 +70,19 @@
           </div>
         </div>
       </div>
+
       <div *ngIf="isThinking" class="flex justify-start items-center space-x-2 p-2">
-        <div class="w-5 h-5 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
-        <p class="text-gray-600">Thinking...</p>
+        <div class="flex space-x-1">
+          <div class="typing-animation">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>        
+        </div>
       </div>
     </div>
+    
 
-    <!-- File Upload Indicator -->
     <div *ngIf="isUploading" class="p-2 bg-yellow-50 text-yellow-700 flex items-center">
       <span class="mr-2">⇪</span>
       <span>Uploading document...</span>
@@ -136,8 +141,15 @@
       </div>
     </div>
     <div *ngIf="isThinking" class="flex justify-start items-center space-x-2 p-2">
-      <div class="w-4 h-4 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+      <div class="flex space-x-1">
+        <div class="typing-animation">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>        
+      </div>
     </div>
+    
   </div>
 
   <!-- Input Area -->

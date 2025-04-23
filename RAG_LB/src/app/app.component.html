@@ -1,28 +1,3 @@
-<div *ngIf="showTextBox" class="cloud-text">Ask From Leo!</div>
-
-<p-button 
-  [style]="{
-    position: 'fixed',
-    background: 'transparent',
-    backgroundColor: 'none',
-    border: 'none',
-    boxShadow: 'none',
-    bottom: '30px',
-    right: '30px',
-    zIndex: 1000,
-    width: '100px',
-    height: '100px',
-    borderRadius: '50%',
-    padding: '0',
-    overflow: 'visible'
-  }"
-  (onClick)="toggleChat()"
->
-  <ng-template pTemplate="content">
-    <img src="../assets/images/chat2.png" alt="Chat" class="pulsing-image" style="width: 120px; height: 100px;" />
-  </ng-template>
-</p-button>
-
-<app-employee-chatbot *ngIf="showChat"></app-employee-chatbot>
+<app-float-button [page1]="'main'"></app-float-button>
 
 <router-outlet></router-outlet>

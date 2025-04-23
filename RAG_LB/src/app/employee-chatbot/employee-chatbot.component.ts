@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -37,12 +37,25 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
 
   constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, private sharedService : SharedService) {}
 
+  @Input() page!: string;
+
   ngOnInit() {
     this.fetchThreads();
 
     this.sharedService.showChat$.subscribe(state => {
       this.showChat = state;
     });
+    const aiMessage = {
+      id: 1000,
+      type: 'ai',
+      text: '',
+      ai_response : "Hi there!",
+      timestamp: this.getCurrentTime(),
+      page: this.page
+    };
+
+    this.messages.push(aiMessage);
+
   }
 
   ngAfterViewInit() {
@@ -128,12 +141,12 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
       this.scrollToBottom();
       this.cdRef.detectChanges();
 
-      const payload: any = { message: userMessage.text };
+      const payload: any = { message: userMessage.text, page: this.page };
       if (this.selectedThreadId) {
         payload.thread_id = this.selectedThreadId;
       }
 
-      this.http.post<{ response: string; text:string; ai_response:string ;thread_id: number, thread_title: string, is_new_thread: boolean }>('http://127.0.0.1:8000/chat', payload).subscribe(
+      this.http.post<{ response: string; text:string; ai_response:string ;thread_id: number, thread_title: string, is_new_thread: boolean, page: string }>('http://127.0.0.1:8000/chat', payload).subscribe(
         (res) => {
           this.selectedThreadId = res.thread_id; 
           const aiMessage = {
@@ -142,6 +155,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
             text: res.text,
             ai_response : res.ai_response,
             timestamp: this.getCurrentTime(),
+            page: this.page
           };
 
           const thread = {
@@ -166,6 +180,7 @@ export class EmployeeChatbotComponent implements AfterViewInit, OnInit {
             text: 'Sorry, I am unable to process your request at the moment.',
             ai_response : error.error.detail,
             timestamp: this.getCurrentTime(),
+            page: this.page,
           });
           this.cdRef.detectChanges();
           this.scrollToBottom();

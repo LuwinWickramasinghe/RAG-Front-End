@@ -1,0 +1,260 @@
+@keyframes slideIn {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+}
+
+.minimized-chat {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: 500px;
+  z-index: 9999;
+  animation: slideIn 0.3s ease-out;
+}
+
+.minimized-header {
+  background-color: #E4E4E4;
+  padding: 1rem;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.minimized-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.minimized-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.minimize-button {
+  margin-right: 0.5rem;
+  color: #E4E4E4;
+  background-color: #E4E4E4;
+  border: 0;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    color: #1a202c;
+    cursor: pointer;
+  }
+
+  &:active {
+    transform: scale(0.95);
+    background-color: #d1d1d1;
+  }
+}
+
+
+.minimize-button:hover {
+  color: #1a202c;
+
+}
+
+.minimized-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.minimized-loading-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 4px solid #e2e8f0;
+  border-top-color: #4a5568;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.user-message-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.minimized-user-message {
+  background-color: #f56565;
+  color: #ffffff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  max-width: 80%;
+  font-size: 0.75rem;
+}
+
+.ai-message-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.minimized-ai-message {
+  background-color: #f7fafc;
+  color: #2d3748;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  max-width: 80%;
+  font-size: 0.75rem;
+}
+
+.thinking-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.typing-animation {
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #4a5568;
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: pulse 1.2s infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.8s;
+}
+
+.input-area {
+  padding: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.minimized-input {
+  flex-grow: 1;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  outline: none;
+}
+
+.minimized-send-button {
+  background-color: #E4E4E4;
+  color: #ffffff;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  border: 0;
+}
+
+.logo-container {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  margin-right: 8px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.suggestion-chip {
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
+.scrollable {
+  max-height: 54px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
